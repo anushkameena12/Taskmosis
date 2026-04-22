@@ -1,16 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import Login from "./pages/Login"
+import Signup from "./pages/Signup"
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  
 
   return (
-   <>
-   <h1 className="text-3xl text-center font-bold underline text-blue-500">Tailwind is working </h1>
-   </>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Login/>} />
+      <Route path="/signup" element={<Signup/>} />
+    </Routes>
+    </BrowserRouter>
+   
   )
 }
 
