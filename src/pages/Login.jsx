@@ -10,9 +10,11 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log("Logged in successfully!", userCredential);
             navigate("/dashboard");
         } catch (error){
+            console.log(error);
             alert(error.message);
         }
     }
