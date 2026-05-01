@@ -2,12 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import taskRoutes from './routes/taskRoutes.js';
+import habitRoutes from './routes/habitRoutes.js';
 
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 
 mongoose.connect("mongodb+srv://anushka:Jacob@cluster0.xgvejlw.mongodb.net/?appName=Cluster0/admin").then(() => console.log("Connected to MongoDB")).catch((err) => console.log(err));
 
@@ -16,6 +18,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", taskRoutes);
+
+app.use("/api/habits", habitRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => {

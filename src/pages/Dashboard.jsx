@@ -1,88 +1,51 @@
-import React, { useEffect, useState } from 'react'
-import { auth } from '../firebase/firebase';
-import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = ({ user }) => {
-    const navigate = useNavigate();
-
-    const [tasks, setTasks] = useState([]);
-    const [title, setTitle] = useState("");
-
-    if(!user) return <p>Loading...</p>
-
-    //Fetch tasks for the user
-    const fetchTasks = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5000/api/tasks?userId=${user.uid}`);
-
-        
-        setTasks(res.data);
-      }catch (error) {
-        console.log(error);
-      }
-    }
-
-    useEffect(() => {
-     fetchTasks();
-    }, []);
-
-    const handleAddTask = async () => {
-      try {
-        await axios.post("http://localhost:5000/api/tasks", {
-          title,
-          userId: user.uid,
-        })
-        setTitle("");
-        fetchTasks();
-      }catch (error) {
-        console.log(error);
-      }
-    }
-
-    const handleLogout = async () => {
-        await signOut(auth);
-        navigate("/");
-        
-    }
-
+  const navigate = useNavigate();
 
   return (
-    <div className='flex flex-col items-center mt-20 gap-4'>
-        <h1 className='text-3xl font-bold'>Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white flex flex-col items-center justify-center px-6">
 
-        <div className='flex gap-2'>
-          <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className='border px-2 py-1'
-          placeholder='New Task'
-          />
-          <button
-          onClick={handleAddTask}
-          className='bg-blue-500 text-white px-4 py-2'
-          >Add Task
+      <h1 className="text-4xl font-bold mb-4 text-center">
+        Welcome back 🌿
+      </h1>
 
-          </button>
+      <p className="text-gray-400 mb-10 text-center max-w-md">
+        Stay consistent, track your tasks, and build better habits every day.
+      </p>
+
+      <div className="flex flex-col md:flex-row gap-6">
+
+        {/* Tasks Card */}
+        <div
+          onClick={() => navigate("/tasks")}
+          className="cursor-pointer bg-slate-800 border border-green-400/20 hover:border-green-400/40 p-6 rounded-xl shadow-green-500/10 shadow-lg hover:scale-[1.03] transition"
+        >
+          <h2 className="text-xl font-semibold mb-2 text-green-400">
+            📋 Tasks
+          </h2>
+          <p className="text-gray-400 text-sm">
+            Manage your daily tasks efficiently
+          </p>
         </div>
 
-        {/* Task List */}
-        <ul className='w-1/2'>
-          {tasks.map((task) => (
-            <li key={task._id} className='border p-2 mt-2 flex justify-between'>
-              {task.title}
-            </li>
-          ))}
-        </ul>
+        {/* Habits Card */}
+        <div
+          onClick={() => navigate("/habits")}
+          className="cursor-pointer bg-slate-800 border border-green-400/20 hover:border-green-400/40 p-6 rounded-xl shadow-green-500/10 shadow-lg hover:scale-[1.03] transition"
+        >
+          <h2 className="text-xl font-semibold mb-2 text-green-400">
+            🔁 Habits
+          </h2>
+          <p className="text-gray-400 text-sm">
+            Build consistency with daily habits
+          </p>
+        </div>
 
-        <button
-        onClick={handleLogout}
-        className='bg-red-500 text-white px-4 py-2'
-        >Logout</button>
-      
+      </div>
+
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

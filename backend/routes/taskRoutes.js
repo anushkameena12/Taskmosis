@@ -38,3 +38,35 @@ router.get("/tasks", async (req, res) => {
 });
 
 export default router;
+
+// Delete Task
+
+router.delete("/tasks/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await Task.findByIdAndDelete(id);
+
+        res.json({ message: "Task deleted" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Update Task
+
+router.put("/tasks/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { completed } = req.body;
+
+        const updatedTask = await Task.findByIdAndUpdate(
+            id,
+            { completed },
+            { new: true }
+        );
+        res.json(updatedTask);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
