@@ -19,6 +19,9 @@ function App() {
       setUser(currentUser);
       setLoading(false);
       console.log("Auth state:", currentUser);
+      console.log("displayName:", currentUser?.displayName);
+console.log("email:", currentUser?.email);
+console.log("uid:", currentUser?.uid);
     });
 
     return () => unsubscribe();
@@ -39,7 +42,7 @@ function App() {
         {/* Protected Routes */}
         <Route
           path="/dashboard"
-          element={user ? <Dashboard user={user} /> : <Navigate to="/" />}
+          element={user ? <Dashboard user={user} /> : <Login/>}
         />
         <Route
           path="/tasks"

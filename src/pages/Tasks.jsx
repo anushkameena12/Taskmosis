@@ -81,7 +81,7 @@ const Tasks = ({ user }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white flex flex-col items-center py-10 px-4">
 
-    {/* Back */}
+    
     <button
       onClick={() => navigate("/dashboard")}
       className="self-start mb-4 text-green-400 hover:underline"
@@ -93,7 +93,7 @@ const Tasks = ({ user }) => {
       Tasks 🌿
     </h1>
 
-    {/* Stats */}
+    
     <div className="grid grid-cols-3 gap-4 mb-8 w-full max-w-xl">
       <div className="bg-slate-800 border border-green-400/20 p-4 rounded-xl text-center shadow-green-500/10 shadow">
         <p className="text-gray-400 text-sm">Total</p>
@@ -111,7 +111,7 @@ const Tasks = ({ user }) => {
       </div>
     </div>
 
-    {/* Add Task */}
+    
     <div className="flex gap-3 mb-6 w-full max-w-xl">
       <input
         value={title}
@@ -129,7 +129,7 @@ const Tasks = ({ user }) => {
       </button>
     </div>
 
-    {/*  Task List */}
+    
     <div className="w-full max-w-xl space-y-3">
       {tasks.length === 0 ? (
         <p className="text-gray-400 text-center text-lg">
@@ -173,7 +173,7 @@ const Tasks = ({ user }) => {
       )}
     </div>
 
-    {/*  Logout */}
+    
     <button
       onClick={handleLogout}
       className="mt-8 bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg transition"

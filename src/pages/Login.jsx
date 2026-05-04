@@ -1,53 +1,99 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { auth } from '../firebase/firebase';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const handleLogin = async () => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("Logged in successfully!", userCredential);
-            navigate("/dashboard");
-        } catch (error){
-            console.log(error);
-            alert(error.message);
-        }
+  const handleLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Logged in successfully!", userCredential);
+      navigate("/dashboard");
+    } catch (error) {
+      console.log(error);
+      alert(error.message);
     }
+  };
 
   return (
-    <div className='flex flex-col items-center mt-20 gap-4'>
-        <h1 className='text-2xl font-bold'>
-            Login
-        </h1>
+    <div className="min-h-screen flex items-center justify-center px-4
+    bg-gradient-to-br from-[#fdfaf6] via-[#f3e9df] to-[#e9d8c8] relative overflow-hidden">
 
-        <input
-        className='border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500'
-        placeholder='Email'
-        onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-        className='border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500'
-        type='password'
-        placeholder='Password'
-        onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button
-        onClick={handleLogin}
-        className='bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300'
-        >
-            Login
-        </button>
+    
+      <div className="absolute w-[300px] h-[300px] bg-[#e6d3c3] rounded-full blur-3xl opacity-40 top-[-50px] left-[-50px]" />
+      <div className="absolute w-[250px] h-[250px] bg-[#d6bfa7] rounded-full blur-3xl opacity-40 bottom-[-50px] right-[-50px]" />
 
       
-    </div>
-  )
-}
+      <div className="relative w-full max-w-md 
+      bg-white/80 backdrop-blur-xl 
+      border border-[#e7d7c7] 
+      rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] p-8">
 
-export default Login
+        <h1 className="text-3xl font-semibold text-center text-[#4b2e2e] mb-2">
+          Welcome Back
+        </h1>
+
+        <p className="text-center text-gray-500 text-sm mb-6">
+          Log in to continue your journey
+        </p>
+
+        <div className="flex flex-col gap-4">
+
+          
+          <input
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+            className="px-4 py-3 rounded-xl 
+            bg-white/70 
+            border border-[#e7d7c7] 
+            focus:outline-none focus:ring-2 focus:ring-[#c8a27a] 
+            transition duration-200"
+          />
+
+          
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+            className="px-4 py-3 rounded-xl 
+            bg-white/70 
+            border border-[#e7d7c7] 
+            focus:outline-none focus:ring-2 focus:ring-[#c8a27a] 
+            transition duration-200"
+          />
+
+          
+          <button
+            onClick={handleLogin}
+            className="mt-3 
+            bg-gradient-to-r from-[#6f4e37] to-[#5c3d2e] 
+            hover:from-[#5c3d2e] hover:to-[#4b2e2e] 
+            text-white py-3 rounded-xl font-medium 
+            transition duration-300 
+            shadow-md hover:shadow-lg active:scale-[0.98]"
+          >
+            Login
+          </button>
+
+        </div>
+        
+        <p className="text-center text-gray-500 text-sm mt-6">
+          Don’t have an account?{" "}
+          <span
+            onClick={() => navigate("/signup")}
+            className="text-[#6f4e37] hover:underline cursor-pointer"
+          >
+            Sign up
+          </span>
+        </p>
+
+      </div>
+    </div>
+  );
+};
+
+export default Login;

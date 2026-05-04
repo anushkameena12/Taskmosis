@@ -5,7 +5,7 @@ import Task from '../models/Task.js';
 
 const router = express.Router();
 
-// Task creation 
+// API for creating tasks
 
 router.post("/tasks", async (req, res) => {
     try {
@@ -25,7 +25,7 @@ router.post("/tasks", async (req, res) => {
     }
 });
 
-// Get all tasks for a user
+// API for getting all tasks for a user
 
 router.get("/tasks", async (req, res) => {
     try {
@@ -39,7 +39,7 @@ router.get("/tasks", async (req, res) => {
 
 export default router;
 
-// Delete Task
+// API for deleting a task
 
 router.delete("/tasks/:id", async (req, res) => {
     try {
@@ -53,7 +53,7 @@ router.delete("/tasks/:id", async (req, res) => {
     }
 });
 
-// Update Task
+// API for updating a task
 
 router.put("/tasks/:id", async (req, res) => {
     try {
