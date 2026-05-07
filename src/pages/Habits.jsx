@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import CalendarHeatmap from "react-calendar-heatmap";
+import "react-calendar-heatmap/dist/styles.css";
+import { subDays } from "date-fns";
 
 const Habits = ({ user }) => {
   const navigate = useNavigate();
@@ -16,12 +11,20 @@ const Habits = ({ user }) => {
   const [habits, setHabits] = useState([]);
   const [title, setTitle] = useState("");
 
-  //  Fetch habits
+  // Edit modal state
+  const [editingHabit, setEditingHabit] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+
+  // Delete modal state
+  const [deletingHabit, setDeletingHabit] = useState(null);
+
+  // Fetch habits
   const fetchHabits = async () => {
     try {
       const res = await axios.get(
         `http://localhost:5000/api/habits?userId=${user.uid}`
       );
+
       setHabits(res.data);
     } catch (error) {
       console.log(error);
@@ -32,7 +35,7 @@ const Habits = ({ user }) => {
     if (user) fetchHabits();
   }, [user]);
 
-  //  Add habits
+  // Add habit
   const addHabit = async () => {
     if (!title.trim()) return;
 
@@ -44,129 +47,469 @@ const Habits = ({ user }) => {
 
       setTitle("");
       fetchHabits();
+
     } catch (error) {
       console.log(error);
     }
   };
 
-  //  Mark done
+  // Mark done
   const markDone = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/habits/${id}`);
+      await axios.put(
+        `http://localhost:5000/api/habits/${id}`
+      );
 
-      //  fetch fresh data (ensures sync)
       fetchHabits();
+
     } catch (error) {
       console.log(error);
     }
   };
 
-  //  Check if completed today
+  // Save edited habit
+  const handleEdit = async () => {
+    if (!editTitle.trim()) return;
+
+    try {
+      await axios.put(
+        `http://localhost:5000/api/habits/edit/${editingHabit._id}`,
+        {
+          title: editTitle,
+        }
+      );
+
+      setEditingHabit(null);
+      setEditTitle("");
+
+      fetchHabits();
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Delete habit
+  const handleDelete = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/habits/delete/${deletingHabit._id}`
+      );
+
+      setDeletingHabit(null);
+
+      fetchHabits();
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Check if completed today
   const isCompletedToday = (lastCompleted) => {
     if (!lastCompleted) return false;
 
-    const today = new Date().toISOString().split("T")[0];
-    const last = new Date(lastCompleted).toISOString().split("T")[0];
+    const today = new Date()
+      .toISOString()
+      .split("T")[0];
+
+    const last = new Date(lastCompleted)
+      .toISOString()
+      .split("T")[0];
 
     return today === last;
   };
 
- 
-  const chartData = habits.map((habit) => ({
-    name: habit.title,
-    streak: habit.streak,
-  }));
-
-  if (!user) return <p className="text-center mt-10">Loading...</p>;
+  if (!user) {
+    return (
+      <p className="text-center mt-10">
+        Loading...
+      </p>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white flex flex-col items-center py-10 px-4">
-      
-      {/*  Back */}
-      <button
-        onClick={() => navigate("/dashboard")}
-        className="self-start mb-4 text-green-400 hover:underline"
+    <div
+      className="
+      min-h-screen px-6 py-8
+      bg-gradient-to-br
+      from-[#fdfaf6]
+      via-[#f3e9df]
+      to-[#e9d8c8]"
+    >
+
+      {/* Top */}
+      <div className="relative flex items-center mb-10">
+
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="
+          text-[#6f4e37]
+          hover:underline"
+        >
+          ← Back
+        </button>
+
+        <h1
+          className="
+          absolute left-1/2
+          -translate-x-1/2
+          text-3xl font-semibold
+          text-[#4b2e2e]"
+        >
+          Habits
+        </h1>
+
+      </div>
+
+      {/* Add Habit */}
+      <div
+        className="
+        flex gap-3 mb-10
+        max-w-2xl mx-auto"
       >
-        ← Back to Dashboard
-      </button>
 
-      <h1 className="text-4xl font-bold mb-6 text-green-400">
-        Habits 🌿
-      </h1>
-
-      {/*  Add Habit */}
-      <div className="flex gap-3 mb-6 w-full max-w-xl">
         <input
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="New habit..."
-          className="flex-1 px-4 py-2 rounded-lg bg-slate-800 border border-green-400/20 focus:outline-none focus:ring-2 focus:ring-green-400"
+          onChange={(e) =>
+            setTitle(e.target.value)
+          }
+
+          placeholder="Add a new habit..."
+
+          className="
+          flex-1 px-4 py-3
+          rounded-xl
+          bg-white/80
+          border border-[#e6d3c3]
+          focus:outline-none
+          focus:ring-2
+          focus:ring-[#c8a27a]"
         />
 
         <button
           onClick={addHabit}
-          className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg"
+
+          className="
+          bg-[#6f4e37]
+          hover:bg-[#5c3d2e]
+          text-white
+          px-5 py-3
+          rounded-xl transition"
         >
           Add
         </button>
+
       </div>
 
-      {/*  Habit List */}
-      <div className="w-full max-w-xl space-y-3">
+      {/* Habit Grid */}
+      <div
+        className="
+        grid
+        sm:grid-cols-2
+        lg:grid-cols-3
+        gap-6"
+      >
+
         {habits.length === 0 ? (
-          <p className="text-gray-400 text-center">
-            No habits yet 
+          <p className="text-gray-500">
+            No habits yet?
           </p>
         ) : (
           habits.map((habit) => (
+
             <div
               key={habit._id}
-              className="flex justify-between items-center bg-slate-800 border border-green-400/20 p-4 rounded-xl hover:shadow-[0_0_12px_rgba(34,197,94,0.3)] transition"
+
+              className="
+              bg-white/80
+              border border-[#e6d3c3]
+              rounded-2xl
+              p-5
+              shadow-sm
+              hover:shadow-md
+              transition"
             >
-              <div>
-                <p className="text-lg">{habit.title}</p>
-                <p className="text-sm text-green-300">
-                   {habit.streak} day streak 🔥
-                </p>
+
+              {/* Title */}
+              <div className="flex justify-between items-start mb-4">
+
+                <h2
+                  className="
+                  text-lg font-semibold
+                  text-[#4b2e2e]"
+                >
+                  {habit.title}
+                </h2>
+
+                <div className="flex gap-2">
+
+                  <button
+                    onClick={() => {
+                      setEditingHabit(habit);
+                      setEditTitle(habit.title);
+                    }}
+
+                    className="
+                    text-xs
+                    px-3 py-1
+                    rounded-lg
+                    bg-[#f3e9df]
+                    hover:bg-[#e6d3c3]
+                    text-[#6f4e37]
+                    transition"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setDeletingHabit(habit)
+                    }
+
+                    className="
+                    text-xs
+                    px-3 py-1
+                    rounded-lg
+                    bg-red-100
+                    hover:bg-red-200
+                    text-red-600
+                    transition"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+
               </div>
 
-              <button
-                onClick={() => markDone(habit._id)}
-                disabled={isCompletedToday(habit.lastCompleted)}
-                className={`px-3 py-1 rounded ${
-                  isCompletedToday(habit.lastCompleted)
-                    ? "bg-gray-700 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600"
-                }`}
+              {/* Heatmap */}
+              <div className="mb-4 overflow-x-auto">
+
+                <CalendarHeatmap
+                  startDate={subDays(new Date(), 90)}
+
+                  endDate={new Date()}
+
+                  values={
+                    habit.completedDates?.map(
+                      (date) => ({
+                        date,
+                        count: 1,
+                      })
+                    ) || []
+                  }
+
+                  classForValue={(value) => {
+                    if (!value) {
+                      return "color-empty";
+                    }
+
+                    return "color-scale-4";
+                  }}
+                />
+
+              </div>
+
+              {/* Streak */}
+              <p
+                className="
+                text-sm
+                text-[#a67c52]
+                mb-4"
               >
-                {isCompletedToday(habit.lastCompleted)
-                  ? "✅"
-                  : "Done"}
+                🔥 {habit.streak} day streak
+              </p>
+
+              {/* Mark Done */}
+              <button
+                onClick={() =>
+                  markDone(habit._id)
+                }
+
+                disabled={isCompletedToday(
+                  habit.lastCompleted
+                )}
+
+                className={`
+                  w-full py-2 rounded-xl
+                  transition text-sm
+                  ${
+                    isCompletedToday(
+                      habit.lastCompleted
+                    )
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-[#a67c52] hover:bg-[#8c6239] text-white"
+                  }
+                `}
+              >
+                {isCompletedToday(
+                  habit.lastCompleted
+                )
+                  ? "Done Today ✓"
+                  : "Mark Done"}
               </button>
+
             </div>
           ))
         )}
+
       </div>
 
-      {/*  Chart */}
-      <div className="w-full max-w-xl mt-10">
-        <h2 className="text-xl mb-4 text-green-400">
-          Progress 
-        </h2>
+      {/* Edit Modal */}
+      {editingHabit && (
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
-            <XAxis dataKey="name" stroke="#9CA3AF" />
-            <YAxis stroke="#9CA3AF" />
-            <Tooltip />
-            <Bar
-              dataKey="streak"
-              fill="#22c55e"
-              radius={[8, 8, 0, 0]}
+        <div
+          className="
+          fixed inset-0
+          bg-black/40
+          flex items-center justify-center
+          z-50"
+        >
+
+          <div
+            className="
+            bg-[#fdfaf6]
+            w-[90%] max-w-md
+            rounded-2xl
+            p-6
+            shadow-xl"
+          >
+
+            <h2
+              className="
+              text-2xl font-semibold
+              text-[#4b2e2e]
+              mb-4"
+            >
+              Edit Habit
+            </h2>
+
+            <input
+              value={editTitle}
+
+              onChange={(e) =>
+                setEditTitle(e.target.value)
+              }
+
+              className="
+              w-full px-4 py-3
+              rounded-xl
+              border border-[#e6d3c3]
+              bg-white
+              focus:outline-none
+              focus:ring-2
+              focus:ring-[#c8a27a]"
             />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+
+              <button
+                onClick={() => {
+                  setEditingHabit(null);
+                  setEditTitle("");
+                }}
+
+                className="
+                px-4 py-2
+                rounded-xl
+                bg-gray-200
+                hover:bg-gray-300
+                transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleEdit}
+
+                className="
+                px-4 py-2
+                rounded-xl
+                bg-[#6f4e37]
+                hover:bg-[#5c3d2e]
+                text-white
+                transition"
+              >
+                Save
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {deletingHabit && (
+
+        <div
+          className="
+          fixed inset-0
+          bg-black/40
+          flex items-center justify-center
+          z-50"
+        >
+
+          <div
+            className="
+            bg-[#fdfaf6]
+            w-[90%] max-w-sm
+            rounded-2xl
+            p-6
+            shadow-xl"
+          >
+
+            <h2
+              className="
+              text-xl font-semibold
+              text-[#4b2e2e]
+              mb-3"
+            >
+              Delete Habit?
+            </h2>
+
+            <p className="text-gray-500 mb-6">
+              This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3">
+
+              <button
+                onClick={() =>
+                  setDeletingHabit(null)
+                }
+
+                className="
+                px-4 py-2
+                rounded-xl
+                bg-gray-200
+                hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+
+                className="
+                px-4 py-2
+                rounded-xl
+                bg-red-500
+                hover:bg-red-600
+                text-white"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 };

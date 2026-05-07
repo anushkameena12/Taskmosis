@@ -11,9 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import CalendarHeatmap from "react-calendar-heatmap";
-import "react-calendar-heatmap/dist/styles.css";
-import { subDays} from "date-fns";
 
 const Dashboard = ({ user }) => {
   const navigate = useNavigate();
@@ -32,15 +29,7 @@ const Dashboard = ({ user }) => {
 
   const [todayData, setTodayData] = useState({
     pendingTasks: [],
-    habits: [],
   });
-
-  const generateHeatmapData = () => {
-    return todayData.habits.filter((h) => h.lastCompleted).map((habit) => ({
-      date: habit.lastCompleted.split("T")[0],
-      count: habit.streak,
-    }));
-  }
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -49,7 +38,7 @@ const Dashboard = ({ user }) => {
 
   const fetchStats = async () => {
     try {
-   
+      
       const taskRes = await axios.get(
         `http://localhost:5000/api/tasks?userId=${user.uid}`
       );
@@ -77,7 +66,6 @@ const Dashboard = ({ user }) => {
 
       const chartData = habits
         .sort((a, b) => b.streak - a.streak)
-        .slice(0, 5)
         .map((h) => ({
           name: h.title,
           streak: h.streak,
@@ -89,14 +77,13 @@ const Dashboard = ({ user }) => {
         chartData,
       });
 
-     
+      
       const pendingTasks = tasks
         .filter((t) => !t.completed)
-        .slice(0, 5);
+        .slice(0, 10);
 
       setTodayData({
         pendingTasks,
-        habits,
       });
 
     } catch (error) {
@@ -109,36 +96,34 @@ const Dashboard = ({ user }) => {
   }, [user]);
 
   return (
-    <div className="min-h-screen px-6 py-8 
-    bg-gradient-to-br from-[#fdfaf6] via-[#f3e9df] to-[#e9d8c8]">
+    <div className="min-h-screen px-6 py-8 bg-gradient-to-br from-[#fdfaf6] via-[#f3e9df] to-[#e9d8c8]">
 
-    
+      {/* Navbar */}
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-2xl font-semibold text-[#4b2e2e]">
-          Taskmosis ☕
+          Taskmosis 
         </h1>
 
         <button
           onClick={handleLogout}
-          className="bg-[#6f4e37] hover:bg-[#5c3d2e] text-white px-4 py-2 rounded-xl text-sm"
+          className="bg-[#6f4e37] hover:bg-[#5c3d2e] text-white px-4 py-2 rounded-xl text-sm transition"
         >
           Logout
         </button>
       </div>
 
-    
+      {/*  header */}
       <div className="mb-10">
         <h2 className="text-4xl font-semibold text-[#4b2e2e] mb-2">
-          Welcome back {user?.displayName || "User"}
+          Welcome back, {user?.displayName || "User"}
         </h2>
         <p className="text-gray-500">
           Stay consistent and track your growth.
         </p>
       </div>
 
-  
+      {/* Stats */}
       <div className="grid md:grid-cols-3 gap-4 mb-10">
-
         <div className="bg-white/80 border rounded-xl p-4">
           <p className="text-gray-500 text-sm">Total Tasks</p>
           <h3 className="text-2xl font-semibold text-[#4b2e2e]">
@@ -156,111 +141,96 @@ const Dashboard = ({ user }) => {
         <div className="bg-white/80 border rounded-xl p-4">
           <p className="text-gray-500 text-sm">Best Streak</p>
           <h3 className="text-2xl font-semibold text-[#4b2e2e]">
-            🔥 {habitStats.bestStreak}
+             {habitStats.bestStreak} 🔥
           </h3>
         </div>
-
       </div>
 
-    
-      <div className="grid md:grid-cols-2 gap-6 mb-10">
+      {/*  Main Cards */}
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-       
-        <div className="bg-white/80 border rounded-2xl p-6">
+        {/*  Task Progress */}
+        <div className="bg-white/80 border rounded-2xl p-6 h-[320px] flex flex-col">
           <h3 className="text-lg font-semibold text-[#4b2e2e] mb-4">
             Task Progress
           </h3>
 
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart
-              data={[
-                { name: "Completed", value: taskStats.completed },
-                { name: "Pending", value: taskStats.pending },
-              ]}
-            >
-              <XAxis dataKey="name" stroke="#6b7280" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="#6f4e37" />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: "Completed", value: taskStats.completed },
+                  { name: "Pending", value: taskStats.pending },
+                ]}
+              >
+                <XAxis dataKey="name" stroke="#6b7280" />
+                <YAxis />
+                <Tooltip />
+                <Bar
+                  dataKey="value"
+                  fill="#6f4e37"
+                  radius={[6, 6, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-       
-        <div className="bg-white/80 border rounded-2xl p-6">
+        {/*  Today Focus card */}
+        <div className="bg-white/90 border border-[#e6d3c3] rounded-2xl p-6 h-[320px] flex flex-col items-center">
+
+          <h3 className="text-lg font-semibold text-[#4b2e2e] mb-4">
+             Today's Focus 🎯
+          </h3>
+
+          <h4 className="text-sm text-gray-500 mb-3">
+            Pending Tasks
+          </h4>
+
+          {todayData.pendingTasks.length === 0 ? (
+            <p className="text-gray-400 text-sm mt-6">
+              All done 
+            </p>
+          ) : (
+            <div className="w-full space-y-2 overflow-y-auto flex-1 pr-2">
+              {todayData.pendingTasks.map((task) => (
+                <div
+                  key={task._id}
+                  className="bg-[#fdf8f3] border border-[#e6d3c3] px-4 py-2 rounded-lg text-[#4b2e2e] text-sm text-center shadow-sm hover:scale-[1.02] transition"
+                >
+                  {task.title}
+                </div>
+              ))}
+            </div>
+          )}
+
+        </div>
+
+        {/*  Top Habits */}
+        <div className="bg-white/80 border rounded-2xl p-6 h-[320px] flex flex-col">
           <h3 className="text-lg font-semibold text-[#4b2e2e] mb-4">
             Top Habits
           </h3>
 
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={habitStats.chartData}>
-              <XAxis dataKey="name" stroke="#6b7280" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="streak" fill="#a67c52" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-      </div>
-
-  
-      <div className="bg-white/80 border rounded-2xl p-6 mb-10">
-        <h3 className="text-lg font-semibold text-[#4b2e2e] mb-4">
-          Today Focus
-        </h3>
-
-        <div className="grid md:grid-cols-2 gap-6">
-
-         
-          <div>
-            <h4 className="text-sm text-gray-500 mb-2">
-              Pending Tasks
-            </h4>
-
-            {todayData.pendingTasks.length === 0 ? (
-              <p className="text-gray-400 text-sm">
-                All done 🎉
-              </p>
-            ) : (
-              todayData.pendingTasks.map((task) => (
-                <p key={task._id} className="text-[#4b2e2e] text-sm">
-                  • {task.title}
-                </p>
-              ))
-            )}
+          <div className="flex-1 overflow-x-auto">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={habitStats.chartData}>
+                <XAxis dataKey="name" stroke="#6b7280" />
+                <YAxis />
+                <Tooltip />
+                <Bar
+                  dataKey="streak"
+                  fill="#a67c52"
+                  radius={[6, 6, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-
-          {/* Habit heatmap */}
-          <div>
-  <h4 className="text-sm text-gray-500 mb-2">
-    Consistency
-  </h4>
-
-  {todayData.habits.length === 0 ? (
-    <p className="text-gray-400 text-sm">
-      No habits yet
-    </p>
-  ) : (
-    <CalendarHeatmap
-      startDate={subDays(new Date(), 60)}
-      endDate={new Date()}
-      values={generateHeatmapData()}
-      classForValue={(value) => {
-        if (!value) return "color-empty";
-        if (value.count >= 5) return "color-scale-4";
-        if (value.count >= 3) return "color-scale-3";
-        if (value.count >= 2) return "color-scale-2";
-        return "color-scale-1";
-      }}
-    />
-  )}
-</div>
-
         </div>
+
       </div>
 
-  
+      {/*  Navigation */}
       <div className="grid md:grid-cols-2 gap-6">
 
         <div
@@ -268,7 +238,7 @@ const Dashboard = ({ user }) => {
           className="cursor-pointer bg-white/80 border rounded-2xl p-6 shadow hover:scale-[1.02] transition"
         >
           <h2 className="text-xl font-semibold text-[#4b2e2e]">
-            📋 Tasks
+            Tasks
           </h2>
           <p className="text-gray-500 text-sm">
             Manage your daily tasks
@@ -280,7 +250,7 @@ const Dashboard = ({ user }) => {
           className="cursor-pointer bg-white/80 border rounded-2xl p-6 shadow hover:scale-[1.02] transition"
         >
           <h2 className="text-xl font-semibold text-[#4b2e2e]">
-            🔁 Habits
+           Habits
           </h2>
           <p className="text-gray-500 text-sm">
             Track your consistency
