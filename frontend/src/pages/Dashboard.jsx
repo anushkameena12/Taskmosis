@@ -103,8 +103,8 @@ const Dashboard = ({ user }) => {
   return (
   <div className="min-h-screen px-6 py-8 bg-gradient-to-br from-[#fdfaf6] via-[#f3e9df] to-[#e9d8c8]">
     <div className="flex justify-between items-center mb-10">
-      <h1 className="text-2xl font-semibold text-[#4b2e2e]">
-        Taskmosis
+      <h1 className="text-2xl text-[#8C5A3C] gloria-hallelujah-regular">
+        TASKMOSIS
       </h1>
 
 
