@@ -19,12 +19,51 @@ const Tasks = ({ user }) => {
 );
 
   if (!user) {
-    return (
-      <p className="text-center mt-10">
-        Loading...
+  return (
+    <div
+      className="
+      min-h-screen
+      flex flex-col
+      items-center
+      justify-center
+      bg-gradient-to-br
+      from-[#fdfaf6]
+      via-[#f3e9df]
+      to-[#e9d8c8]"
+    >
+
+      
+      <div
+        className="
+        w-16 h-16
+        border-4
+        border-[#d6b89c]
+        border-t-[#6f4e37]
+        rounded-full
+        animate-spin"
+      />
+
+      
+      <h2
+        className="
+        mt-6
+        text-2xl font-semibold
+        text-[#4b2e2e]"
+      >
+        Taskmosis
+      </h2>
+
+      <p
+        className="
+        text-[#8b6f5a]
+        mt-2"
+      >
+        Preparing your workspace...
       </p>
-    );
-  }
+
+    </div>
+  );
+}
 
   const fetchTasks = async () => {
     try {
