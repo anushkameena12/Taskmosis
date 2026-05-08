@@ -4,7 +4,7 @@ import Habit from "../models/Habit.js";
 const router = express.Router();
 
 
-// ADD HABIT
+// Api to create a new habit
 router.post("/", async (req, res) => {
   try {
     const { title, userId } = req.body;
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
 });
 
 
-// GET HABITS
+// Api to get all habits of a user
 router.get("/", async (req, res) => {
   try {
     const { userId } = req.query;
@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
 });
 
 
-// EDIT HABIT
+// Api to edit a habit
 router.put("/edit/:id", async (req, res) => {
   try {
 
@@ -66,7 +66,7 @@ router.put("/edit/:id", async (req, res) => {
 });
 
 
-// DELETE HABIT
+// Api to delete a habit
 router.delete("/delete/:id", async (req, res) => {
   try {
 
@@ -86,7 +86,7 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 
-// MARK DONE
+//  Api to mark a habit as done for the day
 router.put("/:id", async (req, res) => {
   try {
 
@@ -111,7 +111,7 @@ router.put("/:id", async (req, res) => {
           .split("T")[0]
       : null;
 
-    // prevent multiple clicks
+    
     if (lastDate === today) {
       return res.json(habit);
     }

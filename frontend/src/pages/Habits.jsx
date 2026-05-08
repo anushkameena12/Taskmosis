@@ -11,14 +11,14 @@ const Habits = ({ user }) => {
   const [habits, setHabits] = useState([]);
   const [title, setTitle] = useState("");
 
-  // Edit modal state
+ 
   const [editingHabit, setEditingHabit] = useState(null);
   const [editTitle, setEditTitle] = useState("");
 
-  // Delete modal state
+ 
   const [deletingHabit, setDeletingHabit] = useState(null);
 
-  // Fetch habits
+
   const fetchHabits = async () => {
     try {
       const res = await axios.get(
@@ -138,7 +138,7 @@ const Habits = ({ user }) => {
       to-[#e9d8c8]"
     >
 
-      {/* Top */}
+    
       <div className="relative flex items-center mb-10">
 
         <button
@@ -162,7 +162,7 @@ const Habits = ({ user }) => {
 
       </div>
 
-      {/* Add Habit */}
+  
       <div
         className="
         flex gap-3 mb-10
@@ -202,7 +202,6 @@ const Habits = ({ user }) => {
 
       </div>
 
-      {/* Habit Grid */}
       <div
         className="
         grid
@@ -231,7 +230,7 @@ const Habits = ({ user }) => {
               transition"
             >
 
-              {/* Title */}
+            
               <div className="flex justify-between items-start mb-4">
 
                 <h2
@@ -283,45 +282,59 @@ const Habits = ({ user }) => {
 
               </div>
 
-              {/* Heatmap */}
-              <div className="mb-4 overflow-x-auto">
-
+           
+             {/* Heatmap */}
+            <div className="mb-4 overflow-hidden">
+              <div className="scale-[0.85] origin-left">
                 <CalendarHeatmap
-                  startDate={subDays(new Date(), 90)}
-
-                  endDate={new Date()}
-
-                  values={
-                    habit.completedDates?.map(
-                      (date) => ({
-                        date,
-                        count: 1,
-                      })
-                    ) || []
+                startDate={subDays(new Date(), 90)}
+                endDate={new Date()}
+                values={Array.from({ length: 91 }, (_, i) => {
+                  const date = subDays(new Date(), 90 - i).toISOString().split("T")[0];
+                  const completed = habit.completedDates?.some((d) =>
+                    new Date(d).toISOString().split("T")[0] === date);
+                  return {
+                    date,
+                    count: completed ? 1 : 0,
+                  };
+                })}
+                
+                classForValue={(value) => {
+                  if (!value || value.count === 0) {
+                    return "color-empty";
                   }
-
-                  classForValue={(value) => {
-                    if (!value) {
-                      return "color-empty";
-                    }
-
-                    return "color-scale-4";
-                  }}
+                  return "color-scale-4";
+                }}
+                
+                titleForValue={(value) => {
+                  const formattedDate = new Date(value.date)
+                  .toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
+                  
+                  return value.count
+                  ? `Completed on ${formattedDate}`
+                  : `No activity on ${formattedDate}`;
+                }}
+                
+                showWeekdayLabels={false}
                 />
+                </div>
+                
+                </div>
 
-              </div>
-
-              {/* Streak */}
               <p
                 className="
                 text-sm
                 text-[#a67c52]
                 mb-4"
               >
-                🔥 {habit.streak} day streak
+                 {habit.streak} day streak 🔥
               </p>
 
-              {/* Mark Done */}
+         
               <button
                 onClick={() =>
                   markDone(habit._id)
@@ -356,7 +369,7 @@ const Habits = ({ user }) => {
 
       </div>
 
-      {/* Edit Modal */}
+  
       {editingHabit && (
 
         <div
@@ -441,7 +454,7 @@ const Habits = ({ user }) => {
         </div>
       )}
 
-      {/* Delete Modal */}
+ 
       {deletingHabit && (
 
         <div

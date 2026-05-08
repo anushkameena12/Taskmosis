@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 
+.react-calendar-heatmap text {
+  fill: #8b6f5a;
+  font-size: 8px;
+}
+
 .react-calendar-heatmap .color-empty {
-  fill: #f3e9df;
+  fill: #ece7e1;
 }
 
 .react-calendar-heatmap .color-scale-4 {
@@ -12,14 +17,8 @@
 }
 
 .react-calendar-heatmap rect {
-  width: 11px;
-  height: 11px;
-  rx: 3;
-}
-
-.react-calendar-heatmap text {
-  fill: #6f4e37;
-  font-size: 9px;
+  rx: 4;
+  ry: 4;
 }
 
 
