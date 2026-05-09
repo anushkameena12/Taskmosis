@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: "https://taskmosis.vercel.app/",
+        origin: "https://taskmosis.vercel.app",
         credentials: true,
     }
 
@@ -20,7 +20,13 @@ app.use(
 app.use(express.json());
 
 
-mongoose.connect(process.env.MONGO_URI).then(() => console.log("Connected to MongoDB")).catch((err) => console.log(err));
+mongoose.connect(process.env.MONGO_URI).then(() => console.log("Connected to MongoDB"));
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+})
+
+.catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
     res.send("API is working");
