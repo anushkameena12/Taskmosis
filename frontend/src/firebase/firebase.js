@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAKP3BbItnA2IQlNfUFzi3uW99H_erty3s",
-  authDomain: "taskmosis-8c2bd.firebaseapp.com",
-  projectId: "taskmosis-8c2bd",
-  storageBucket: "taskmosis-8c2bd.firebasestorage.app",
-  messagingSenderId: "250088379260",
-  appId: "1:250088379260:web:fea68e0850f72bd6be8af9"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID
 };
 
 // Initialize Firebase
