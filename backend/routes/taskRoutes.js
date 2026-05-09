@@ -6,20 +6,22 @@ const router = express.Router();
 
 // API for creating a new task
 router.post("/tasks", async (req, res) => {
-
   try {
+    console.log("BODY RECEIVED:", req.body);
 
-    const {
-      title,
-      userId,
-      teamId,
-      date,
-    } = req.body;
+    const { title, userId, teamId, date } = req.body;
+
+    // 🔴 HARD VALIDATION (IMPORTANT)
+    if (!title || !userId || !date) {
+      return res.status(400).json({
+        message: "title, userId, and date are required",
+      });
+    }
 
     const newTask = new Task({
       title,
       userId,
-      teamId,
+      teamId: teamId || null,
       date,
     });
 
@@ -28,15 +30,10 @@ router.post("/tasks", async (req, res) => {
     res.status(201).json(newTask);
 
   } catch (error) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
+    console.error("TASK CREATE ERROR:", error);
+    res.status(500).json({ message: error.message });
   }
-
 });
-
 
 // API for fetching tasks for a user on a specific date
 router.get("/tasks", async (req, res) => {
