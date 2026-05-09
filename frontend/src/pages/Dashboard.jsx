@@ -45,7 +45,7 @@ const Dashboard = ({ user }) => {
       const today = new Date().toISOString().split("T")[0];
       
       const taskRes = await axios.get(
-        `https://taskmosis-backend.onrender.com/api/tasks?userId=${user.uid}&date=${today}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/tasks?userId=${user.uid}&date=${today}`
       );
 
       const tasks = taskRes.data;
@@ -59,7 +59,7 @@ const Dashboard = ({ user }) => {
 
       
       const habitRes = await axios.get(
-        `https://taskmosis-backend.onrender.com/api/habits?userId=${user.uid}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/habits?userId=${user.uid}`
       );
 
       const habits = habitRes.data;

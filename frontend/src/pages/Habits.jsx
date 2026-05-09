@@ -22,7 +22,7 @@ const Habits = ({ user }) => {
   const fetchHabits = async () => {
     try {
       const res = await axios.get(
-        `https://taskmosis-backend.onrender.com/api/habits?userId=${user.uid}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/habits?userId=${user.uid}`
       );
 
       setHabits(res.data);
@@ -40,7 +40,7 @@ const Habits = ({ user }) => {
     if (!title.trim()) return;
 
     try {
-      await axios.post("https://taskmosis-backend.onrender.com/api/habits", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/habits`, {
         title,
         userId: user.uid,
       });
@@ -57,7 +57,7 @@ const Habits = ({ user }) => {
   const markDone = async (id) => {
     try {
       await axios.put(
-        `https://taskmosis-backend.onrender.com/api/habits/${id}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/habits/${id}`
       );
 
       fetchHabits();
@@ -73,7 +73,7 @@ const Habits = ({ user }) => {
 
     try {
       await axios.put(
-        `https://taskmosis-backend.onrender.com/api/habits/edit/${editingHabit._id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/habits/edit/${editingHabit._id}`,
         {
           title: editTitle,
         }
@@ -93,7 +93,7 @@ const Habits = ({ user }) => {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `https://taskmosis-backend.onrender.com/api/habits/delete/${deletingHabit._id}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/habits/delete/${deletingHabit._id}`
       );
 
       setDeletingHabit(null);
