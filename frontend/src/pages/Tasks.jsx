@@ -68,7 +68,7 @@ const Tasks = ({ user }) => {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/tasks?userId=${user.uid}&date=${selectedDate}`
+        `https://taskmosis-backend.onrender.com/api/tasks?userId=${user.uid}&date=${selectedDate}`
       );
 
       setTasks(res.data);
@@ -87,7 +87,7 @@ const Tasks = ({ user }) => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/tasks",
+        "https://taskmosis-backend.onrender.com/api/tasks",
         {
           title,
           userId: user.uid,
@@ -107,7 +107,7 @@ const Tasks = ({ user }) => {
     try {
 
       await axios.delete(
-        `http://localhost:5000/api/tasks/${id}`
+        `https://taskmosis-backend.onrender.com/api/tasks/${id}`
       );
 
       fetchTasks();
@@ -124,7 +124,7 @@ const Tasks = ({ user }) => {
     try {
 
       await axios.put(
-        `http://localhost:5000/api/tasks/${id}`,
+        `https://taskmosis-backend.onrender.com/api/tasks/${id}`,
         {
           completed: !completed,
         }
