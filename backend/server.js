@@ -11,7 +11,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://taskmosis.vercel.app",
+    origin: [
+        "https://taskmosis.vercel.app",
+        "https://taskmosis-d76g4wylq-anushka-meenas-projects.vercel.app"
+    ] ,
+        
     credentials: true,
   })
 );
