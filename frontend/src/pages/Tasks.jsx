@@ -7,6 +7,8 @@ import {
   format,
   addDays,
   startOfWeek,
+  addWeeks,
+  subWeeks,
 } from "date-fns";
 
 const Tasks = ({ user }) => {
@@ -15,8 +17,9 @@ const Tasks = ({ user }) => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
 
-  const [selectedDate, setSelectedDate] = useState( new Date().toISOString().split("T")[0]
-);
+  const [selectedDate, setSelectedDate] = useState( new Date().toISOString().split("T")[0] );
+
+  const [currentWeek, setCurrentWeek] = useState(new Date());
 
   if (!user) {
   return (
@@ -153,7 +156,7 @@ const Tasks = ({ user }) => {
     totalTasks - completedTasks;
 
   // Calendar
-  const currentDate = new Date();
+  const currentDate = currentWeek;
 
   const weekDays = Array.from(
     { length: 7 },
@@ -223,26 +226,79 @@ const Tasks = ({ user }) => {
 
       {/* Weekly Calendar */}
       <div className="max-w-3xl mx-auto mb-10">
-        <div className="flex justify-between gap-3">
-          {weekDays.map((day) => {
-            const formattedDate = format(day, "yyyy-MM-dd");
-            const isToday = formattedDate ===
-            format(currentDate, "yyyy-MM-dd");
-            
-            const isSelected = formattedDate === selectedDate;
-            return (
-            <button
-            key={formattedDate}
-            onClick={() =>
+
+  {/* Top Controls */}
+  <div className="flex items-center justify-between mb-6">
+
+    {/* Left Arrow */}
+    <button
+      onClick={() =>
+        setCurrentWeek(subWeeks(currentWeek, 1))
+      }
+      className="
+      w-10 h-10
+      rounded-full
+      bg-white/80
+      border border-[#e6d3c3]
+      text-[#6f4e37]
+      hover:bg-[#f3e9df]
+      transition"
+    >
+      ←
+    </button>
+
+    {/* Month */}
+    <h2 className="text-lg font-semibold text-[#4b2e2e]">
+      {format(currentWeek, "MMMM yyyy")}
+    </h2>
+
+    {/* Right Arrow */}
+    <button
+      onClick={() =>
+        setCurrentWeek(addWeeks(currentWeek, 1))
+      }
+      className="
+      w-10 h-10
+      rounded-full
+      bg-white/80
+      border border-[#e6d3c3]
+      text-[#6f4e37]
+      hover:bg-[#f3e9df]
+      transition"
+    >
+      →
+    </button>
+
+  </div>
+
+  {/* Week Days */}
+  <div className="flex justify-between gap-3">
+
+    {weekDays.map((day) => {
+
+      const formattedDate = format(day, "yyyy-MM-dd");
+
+      const isToday =
+        formattedDate ===
+        format(new Date(), "yyyy-MM-dd");
+
+      const isSelected =
+        formattedDate === selectedDate;
+
+      return (
+        <button
+          key={formattedDate}
+          onClick={() =>
             setSelectedDate(formattedDate)
           }
+
           className="
           flex flex-col
           items-center gap-2
           transition"
         >
 
-       
+          {/* Day */}
           <p
             className={`
               text-sm font-medium
@@ -276,7 +332,7 @@ const Tasks = ({ user }) => {
             {format(day, "dd")}
           </div>
 
-        
+          {/* Today */}
           {isToday && (
             <span className="text-[10px] text-[#a67c52]">
               today
@@ -288,7 +344,6 @@ const Tasks = ({ user }) => {
     })}
 
   </div>
-
 
   <p className="text-center text-[#6f4e37] mt-5 font-medium">
     Tasks for {format(new Date(selectedDate), "MMMM dd, yyyy")}
