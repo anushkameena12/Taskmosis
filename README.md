@@ -89,7 +89,7 @@ Taskmosis/
 ---
 ## Live Demo
 
-[https://your-vercel-link.vercel.app](https://taskmosis.vercel.app)
+https://taskmosis.vercel.app
 
 ----
 ## How It Works
